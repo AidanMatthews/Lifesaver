@@ -9,6 +9,13 @@
 import UIKit
 
 class GetHelpViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+    let _emergencies: [Int: String] = [0: "Urgent help needed",
+                                             1: "Out of gas",
+                                             2: "Injured",
+                                             3: "Medical emergency",
+                                             4: "Weather emergency",
+                                             5: "Other"]
+
     @IBOutlet weak var notifyRadiusText: UITextField!
     @IBOutlet weak var call911Switch: UISwitch!
     @IBOutlet weak var emergencyPicker: UIPickerView!
@@ -31,7 +38,7 @@ class GetHelpViewController: UIViewController, UIPickerViewDataSource, UIPickerV
         
         request.notifyRadius = notifyRadiusText.text!.characters.count > 0 ? Int(notifyRadiusText.text!)! : 3
         request.call911 = call911Switch.isOn
-        request.emergencyDesc = emergencyPicker.selectedRow(inComponent: 0)
+        request.emergencyDesc = _emergencies[emergencyPicker.selectedRow(inComponent: 0)]!
         request.additionalInfo = additionalInfoText.text!
     }
     
@@ -41,25 +48,12 @@ class GetHelpViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     }
     
     public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 5
+        return _emergencies.count
     }
     
     // UIPickerViewDelegate methods
     public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        switch row {
-            case 0:
-                return "Urgent help needed"
-            case 1:
-                return "Out of gas"
-            case 2:
-                return "Injured"
-            case 3:
-                return "Medical emergency"
-            case 4:
-                return "Weather emergency"
-            default:
-                return "Other"
-        }
+        return _emergencies[row]
     }
     
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
