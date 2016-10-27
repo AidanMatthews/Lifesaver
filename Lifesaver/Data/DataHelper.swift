@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Darwin
 
 class DataHelper: NSObject {
     static let sharedInstance = DataHelper()
@@ -48,7 +49,7 @@ class DataHelper: NSObject {
         sqlite3_finalize(insertStatement)
     }
 
-    func openDatabase() -> OpaquePointer {
+    func openDatabase() -> OpaquePointer? {
         var db: OpaquePointer? = nil
         let dbPath = "lifesaver.db"
         if sqlite3_open(dbPath, &db) == SQLITE_OK {
@@ -56,7 +57,7 @@ class DataHelper: NSObject {
         } else {
             print("Unable to open database.")
         }
-        return db!
+        return db
     }
     
     func createTables() {
@@ -84,7 +85,8 @@ class DataHelper: NSObject {
         sqlite3_finalize(createTableStatement)
     }
     
-    func addRequest(id: Int32, userId: Int32, notifyRadius: Int32, call911: Bool, emergencyReason: Int32, otherInfo: String) {
+    func addRequest(userId: Int32, notifyRadius: Int32, call911: Bool, emergencyReason: Int32, otherInfo: String) {
+        let id = arc4random_uniform(1024 * 1024)
         let timestamp: NSDate = NSDate()
         let latitude = 45.5
         let longitude = 68.2
@@ -95,7 +97,7 @@ class DataHelper: NSObject {
         
         if sqlite3_prepare_v2(db, insertStatementString, -1, &insertStatement, nil) == SQLITE_OK {
             
-            sqlite3_bind_int(insertStatement, 1, id)
+            sqlite3_bind_int(insertStatement, 1, Int32(id))
             sqlite3_bind_int(insertStatement, 2, userId)
             sqlite3_bind_int(insertStatement, 3, notifyRadius)
             sqlite3_bind_int(insertStatement, 4, call911 ? 1 : 0)

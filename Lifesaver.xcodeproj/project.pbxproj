@@ -10,6 +10,8 @@
 		66456B951DBEE758004B7F6D /* DataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66456B941DBEE758004B7F6D /* DataHelper.swift */; };
 		66456BA11DC0376F004B7F6D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 66456B981DBEE92D004B7F6D /* libsqlite3.tbd */; };
 		66456BA31DC03FF8004B7F6D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 66456BA21DC03FF8004B7F6D /* CoreLocation.framework */; };
+		66456BBE1DC1A195004B7F6D /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66456BBD1DC1A195004B7F6D /* Server.swift */; };
+		66456BC01DC1A453004B7F6D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66456BBF1DC1A453004B7F6D /* User.swift */; };
 		66FFA2DE1D9F527B004622D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFA2DD1D9F527B004622D6 /* AppDelegate.swift */; };
 		66FFA2E01D9F527B004622D6 /* GetHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFA2DF1D9F527B004622D6 /* GetHelpViewController.swift */; };
 		66FFA2E21D9F527B004622D6 /* GiveHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FFA2E11D9F527B004622D6 /* GiveHelpViewController.swift */; };
@@ -43,6 +45,8 @@
 		66456B961DBEE8EF004B7F6D /* Lifesaver-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Lifesaver-Bridging-Header.h"; sourceTree = "<group>"; };
 		66456B981DBEE92D004B7F6D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		66456BA21DC03FF8004B7F6D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		66456BBD1DC1A195004B7F6D /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		66456BBF1DC1A453004B7F6D /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		66FFA2DA1D9F527B004622D6 /* Lifesaver.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lifesaver.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66FFA2DD1D9F527B004622D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66FFA2DF1D9F527B004622D6 /* GetHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetHelpViewController.swift; sourceTree = "<group>"; };
@@ -129,6 +133,7 @@
 				66FFA2E81D9F527B004622D6 /* LaunchScreen.storyboard */,
 				66FFA2EB1D9F527B004622D6 /* Info.plist */,
 				66456B961DBEE8EF004B7F6D /* Lifesaver-Bridging-Header.h */,
+				66456BBD1DC1A195004B7F6D /* Server.swift */,
 			);
 			path = Lifesaver;
 			sourceTree = "<group>";
@@ -156,6 +161,7 @@
 			children = (
 				66FFA30E1D9F6B55004622D6 /* HelpRequest.swift */,
 				66456B941DBEE758004B7F6D /* DataHelper.swift */,
+				66456BBF1DC1A453004B7F6D /* User.swift */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -298,7 +304,9 @@
 				66FFA2DE1D9F527B004622D6 /* AppDelegate.swift in Sources */,
 				66FFA30F1D9F6B55004622D6 /* HelpRequest.swift in Sources */,
 				66FFA2E01D9F527B004622D6 /* GetHelpViewController.swift in Sources */,
+				66456BBE1DC1A195004B7F6D /* Server.swift in Sources */,
 				66456B951DBEE758004B7F6D /* DataHelper.swift in Sources */,
+				66456BC01DC1A453004B7F6D /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

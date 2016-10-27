@@ -11,7 +11,6 @@ import UIKit
 struct HelpRequest {
     var notifyRadius = 3
     var call911 = true
-    var emergencyDesc = ""
+    var emergencyReason = 0
     var additionalInfo = ""
-    var userId = 0
 }

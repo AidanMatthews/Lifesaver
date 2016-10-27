@@ -34,12 +34,13 @@ class GetHelpViewController: UIViewController, UIPickerViewDataSource, UIPickerV
 
     @IBAction func tappedGetHelpButton(sender: UIButton) {
         var request = HelpRequest()
-        request.userId = 1
         
         request.notifyRadius = notifyRadiusText.text!.characters.count > 0 ? Int(notifyRadiusText.text!)! : 3
         request.call911 = call911Switch.isOn
-        request.emergencyDesc = _emergencies[emergencyPicker.selectedRow(inComponent: 0)]!
+        request.emergencyReason = emergencyPicker.selectedRow(inComponent: 0)
         request.additionalInfo = additionalInfoText.text!
+        
+        Server.sharedInstance.sendRequest(request: request)
     }
     
     // UIPickerViewDataSource methods
