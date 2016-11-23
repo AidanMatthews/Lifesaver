@@ -49,27 +49,37 @@ class DataHelper: NSObject {
         sqlite3_finalize(insertStatement)
     }
 
+    func databasePath() -> String? {
+        let paths: [String] = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+        let documentsDir: String = paths.last!
+        let dbUrl = NSURL(fileURLWithPath: documentsDir).appendingPathComponent("lifesaver.db")
+        return dbUrl?.absoluteString
+    }
+
     func openDatabase() -> OpaquePointer? {
         var db: OpaquePointer? = nil
-        let dbPath = "lifesaver.db"
-        if sqlite3_open(dbPath, &db) == SQLITE_OK {
+        let dbPath = databasePath()!
+        if sqlite3_open((dbPath as NSString).utf8String, &db) == SQLITE_OK {
             print("Successfully opened connection to database at \(dbPath)")
         } else {
-            print("Unable to open database.")
+            let errMsg = String(cString: sqlite3_errmsg(db))
+            print("Unable to open database at \(dbPath): \(errMsg)")
+            sqlite3_close(db)
         }
         return db
     }
     
     func createTables() {
-        let userColumnsString = "Id INT PRIMARY KEY NOT NULL, Name CHAR(255)"
+        let userColumnsString = "Id INTEGER PRIMARY KEY NOT NULL, Name TEXT"
         createTable(tableName: "User", tableColumnsString: userColumnsString)
         
-        let requestColumnsString = "Id INT PRIMARY KEY NOT NULL, User INT FOREIGN KEY, NotifyRadius INT, Call911 BOOL, EmergencyReason INT, OtherInfo CHAR(1024), Timestamp DOUBLE, Latitude FLOAT, Longitude FLOAT"
+        let requestColumnsString = "Id INTEGER PRIMARY KEY NOT NULL, UserId INTEGER, NotifyRadius INTEGER, Call911 BOOL, EmergencyReason INTEGER, OtherInfo TEXT, Timestamp DOUBLE, Latitude FLOAT, Longitude FLOAT, FOREIGN KEY(UserId) REFERENCES User(Id)"
         createTable(tableName: "Request", tableColumnsString: requestColumnsString)
     }
 
     func createTable(tableName: String, tableColumnsString: String) {
-        let createTableString = "CREATE TABLE IF NOT EXISTS \(tableName)(\(tableColumnsString));"
+        let createTableString = "CREATE TABLE \(tableName)(\(tableColumnsString));"
+        print("Creating table with string: \(createTableString)")
         var createTableStatement: OpaquePointer? = nil
 
         if sqlite3_prepare_v2(db, createTableString, -1, &createTableStatement, nil) == SQLITE_OK {
@@ -79,7 +89,8 @@ class DataHelper: NSObject {
                 print("\(tableName) table could not be created.")
             }
         } else {
-            print("CREATE TABLE statement could not be prepared.")
+            let errMsg = String(cString: sqlite3_errmsg(db))
+            print("CREATE TABLE statement could not be prepared: \(errMsg)")
         }
 
         sqlite3_finalize(createTableStatement)
@@ -91,7 +102,7 @@ class DataHelper: NSObject {
         let latitude = 45.5
         let longitude = 68.2
         
-        let insertStatementString = "INSERT INTO Request (Id, User, NotifyRadius, Call911, EmergencyReason, OtherInfo, Timestamp, Latitude, Longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
+        let insertStatementString = "INSERT INTO Request (Id, UserId, NotifyRadius, Call911, EmergencyReason, OtherInfo, Timestamp, Latitude, Longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
         
         var insertStatement: OpaquePointer? = nil
         
