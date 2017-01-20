@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import MapKit
 
 struct HelpRequest {
     var notifyRadius = 3
     var call911 = true
     var emergencyReason = 0
     var additionalInfo = ""
+    var coordinate: CLLocationCoordinate2D
 }

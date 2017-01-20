@@ -9,7 +9,7 @@
 import UIKit
 
 struct User {
-    static let localUser = User()
+    static var localUser = User()
     
     var name = ""
     var id = 0

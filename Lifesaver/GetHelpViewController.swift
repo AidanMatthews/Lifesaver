@@ -22,24 +22,28 @@ class GetHelpViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     @IBOutlet weak var additionalInfoText: UITextField!
     @IBOutlet weak var getHelpButton: UIButton!
 
+    var tapRecognizer: UITapGestureRecognizer?
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        self.tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(SettingsViewController.didTapAnywhere(tapRecognizer:)))
+        self.view.addGestureRecognizer(self.tapRecognizer!);
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func didTapAnywhere(tapRecognizer: UITapGestureRecognizer) {
+        self.view.endEditing(true)
     }
 
     @IBAction func tappedGetHelpButton(sender: UIButton) {
-        var request = HelpRequest()
+        let notifyRadius = notifyRadiusText.text!.characters.count > 0 ? Int(notifyRadiusText.text!)! : 3
         
-        request.notifyRadius = notifyRadiusText.text!.characters.count > 0 ? Int(notifyRadiusText.text!)! : 3
-        request.call911 = call911Switch.isOn
-        request.emergencyReason = emergencyPicker.selectedRow(inComponent: 0)
-        request.additionalInfo = additionalInfoText.text!
-        
+        let request = HelpRequest(notifyRadius: notifyRadius,
+                                  call911: call911Switch.isOn,
+                                  emergencyReason: emergencyPicker.selectedRow(inComponent: 0),
+                                  additionalInfo: additionalInfoText.text!,
+                                  coordinate: CurrentLocation.sharedInstance.currentCoordinate)
+
         Server.sharedInstance.sendRequest(request: request)
     }
     

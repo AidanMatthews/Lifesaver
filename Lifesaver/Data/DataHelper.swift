@@ -6,8 +6,8 @@
 //  Copyright © 2016 Grant McSheffrey. All rights reserved.
 //
 
-import UIKit
 import Darwin
+import CoreLocation
 
 class DataHelper: NSObject {
     static let sharedInstance = DataHelper()
@@ -128,5 +128,38 @@ class DataHelper: NSObject {
         }
         
         sqlite3_finalize(insertStatement)
+    }
+    
+    func getLocalHelpRequests(currentLocation: CLLocationCoordinate2D) -> [HelpRequest] {
+        var localRequests: [HelpRequest]
+        let selectRequestsString = "SELECT * FROM Request;"
+        print("Getting local help requests with string: \(selectRequestsString)")
+        var selectRequestsStatement: OpaquePointer? = nil
+        
+        if sqlite3_prepare_v2(db, selectRequestsString, -1, &selectRequestsStatement, nil) == SQLITE_OK {
+            if sqlite3_step(selectRequestsStatement) == SQLITE_ROW {
+                let notifyRadius = sqlite3_column_int(selectRequestsStatement, 0)
+                let call911 = sqlite3_column_int(selectRequestsStatement, 1)
+                let emergencyReason = sqlite3_column_int(selectRequestsStatement, 2)
+                let infoQueryResult = sqlite3_column_text(selectRequestsStatement, 3)
+                let additionalInfo = String.init(cString: infoQueryResult!)
+                let latitude = sqlite3_column_int(selectRequestsStatement, 4)
+                let longitude = sqlite3_column_int(selectRequestsStatement, 5)
+                let coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
+                let localRequest = HelpRequest(notifyRadius: Int(notifyRadius),
+                                               call911: (call911 == 0),
+                                               emergencyReason: Int(emergencyReason),
+                                               additionalInfo: additionalInfo,
+                                               coordinate: coordinate)
+                localRequests.append(localRequest)
+            } else {
+                print("No local requests found.")
+            }
+        } else {
+            let errMsg = String(cString: sqlite3_errmsg(db))
+            print("SELECT * FROM REQUEST statement could not be prepared: \(errMsg)")
+        }
+        
+        sqlite3_finalize(selectRequestsStatement)
     }
 }
