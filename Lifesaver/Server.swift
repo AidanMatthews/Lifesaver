@@ -14,6 +14,6 @@ class Server: NSObject {
     func sendRequest(request: HelpRequest) {
         let dataHelper = DataHelper.sharedInstance
         
-        dataHelper.addRequest(userId: Int32(User.localUser.id), notifyRadius: Int32(request.notifyRadius), call911: request.call911, emergencyReason: Int32(request.emergencyReason), otherInfo: request.additionalInfo)
+        dataHelper.addRequest(userId: Int32(User.localUser.id), notifyRadius: Int32(request.notifyRadius), call911: request.call911, emergencyReason: Int32(request.emergencyReason), otherInfo: request.additionalInfo, latitude: request.coordinate.latitude, longitude: request.coordinate.longitude)
     }
 }

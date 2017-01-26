@@ -15,4 +15,24 @@ struct HelpRequest {
     var emergencyReason = 0
     var additionalInfo = ""
     var coordinate: CLLocationCoordinate2D
+
+    static func stringForEmergencyReason(reason: Int) -> String {
+        switch reason {
+        case 0:
+            return "Urgent help needed"
+        case 1:
+            return "Out of gas"
+        case 2:
+            return "Injured"
+        case 3:
+            return "Medical emergency"
+        case 4:
+            return "Weather emergency"
+        case 5:
+            return "Other"
+        default:
+            return "Invalid reason"
+        }
+    }
 }
+

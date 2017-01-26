@@ -96,11 +96,9 @@ class DataHelper: NSObject {
         sqlite3_finalize(createTableStatement)
     }
     
-    func addRequest(userId: Int32, notifyRadius: Int32, call911: Bool, emergencyReason: Int32, otherInfo: String) {
+    func addRequest(userId: Int32, notifyRadius: Int32, call911: Bool, emergencyReason: Int32, otherInfo: String, latitude: Double, longitude: Double) {
         let id = arc4random_uniform(1024 * 1024)
         let timestamp: NSDate = NSDate()
-        let latitude = 45.5
-        let longitude = 68.2
         
         let insertStatementString = "INSERT INTO Request (Id, UserId, NotifyRadius, Call911, EmergencyReason, OtherInfo, Timestamp, Latitude, Longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);"
         
@@ -118,10 +116,11 @@ class DataHelper: NSObject {
             sqlite3_bind_double(insertStatement, 8, latitude)
             sqlite3_bind_double(insertStatement, 9, longitude)
             
-            if sqlite3_step(insertStatement) == SQLITE_DONE {
+            let result = sqlite3_step(insertStatement)
+            if result == SQLITE_DONE {
                 print("Successfully inserted request.")
             } else {
-                print("Could not insert request.")
+                print("Could not insert request: \(result)")
             }
         } else {
             print("INSERT statement could not be prepared.")
@@ -131,20 +130,19 @@ class DataHelper: NSObject {
     }
     
     func getLocalHelpRequests(currentLocation: CLLocationCoordinate2D) -> [HelpRequest] {
-        var localRequests: [HelpRequest]
+        var localRequests: [HelpRequest] = []
         let selectRequestsString = "SELECT * FROM Request;"
-        print("Getting local help requests with string: \(selectRequestsString)")
         var selectRequestsStatement: OpaquePointer? = nil
         
         if sqlite3_prepare_v2(db, selectRequestsString, -1, &selectRequestsStatement, nil) == SQLITE_OK {
-            if sqlite3_step(selectRequestsStatement) == SQLITE_ROW {
-                let notifyRadius = sqlite3_column_int(selectRequestsStatement, 0)
-                let call911 = sqlite3_column_int(selectRequestsStatement, 1)
-                let emergencyReason = sqlite3_column_int(selectRequestsStatement, 2)
-                let infoQueryResult = sqlite3_column_text(selectRequestsStatement, 3)
+            while (sqlite3_step(selectRequestsStatement) == SQLITE_ROW) {
+                let notifyRadius = sqlite3_column_int(selectRequestsStatement, 2)
+                let call911 = sqlite3_column_int(selectRequestsStatement, 3)
+                let emergencyReason = sqlite3_column_int(selectRequestsStatement, 4)
+                let infoQueryResult = sqlite3_column_text(selectRequestsStatement, 5)
                 let additionalInfo = String.init(cString: infoQueryResult!)
-                let latitude = sqlite3_column_int(selectRequestsStatement, 4)
-                let longitude = sqlite3_column_int(selectRequestsStatement, 5)
+                let latitude = sqlite3_column_double(selectRequestsStatement, 7)
+                let longitude = sqlite3_column_double(selectRequestsStatement, 8)
                 let coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
                 let localRequest = HelpRequest(notifyRadius: Int(notifyRadius),
                                                call911: (call911 == 0),
@@ -152,8 +150,6 @@ class DataHelper: NSObject {
                                                additionalInfo: additionalInfo,
                                                coordinate: coordinate)
                 localRequests.append(localRequest)
-            } else {
-                print("No local requests found.")
             }
         } else {
             let errMsg = String(cString: sqlite3_errmsg(db))
@@ -161,5 +157,7 @@ class DataHelper: NSObject {
         }
         
         sqlite3_finalize(selectRequestsStatement)
+        
+        return localRequests
     }
 }

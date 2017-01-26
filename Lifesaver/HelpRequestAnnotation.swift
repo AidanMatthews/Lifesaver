@@ -18,6 +18,10 @@ class HelpRequestAnnotation: NSObject, MKAnnotation {
         self.coordinate = helpRequest.coordinate
     }
 
+    var title: String? {
+        return HelpRequest.stringForEmergencyReason(reason: self.helpRequest.emergencyReason)
+    }
+
     var subtitle: String? {
         return self.helpRequest.additionalInfo
     }

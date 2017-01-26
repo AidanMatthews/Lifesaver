@@ -9,23 +9,30 @@
 import UIKit
 import MapKit
 
-class GiveHelpViewController: UIViewController {
+class GiveHelpViewController: UIViewController, MKMapViewDelegate {
 
     @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var button: UIButton!
 
     let regionRadius: CLLocationDistance = 1000
+    var localHelpRequests: Array<HelpRequest> = Array()
+    var updateTimer: Timer = Timer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        DataHelper.sharedInstance.
         // set initial location in Honolulu
-        let initialLocation = CLLocation(latitude: 21.282778, longitude: -157.829444)
-        centerMapOnLocation(location: initialLocation)
+        let currentCoordinate = CurrentLocation.sharedInstance.currentCoordinate
+        centerMapOnLocation(location: currentCoordinate)
+        print("Initializing to latitude: \(currentCoordinate.latitude), longitude: \(currentCoordinate.longitude)")
+
+        self.updateTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true, block: {[unowned self] (Timer) in
+            self.localHelpRequests = DataHelper.sharedInstance.getLocalHelpRequests(currentLocation: currentCoordinate)
+            self.updateAnnotations()
+        })
     }
 
-    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView!
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
     {
         let identifier = "pin"
         var view: MKPinAnnotationView
@@ -42,10 +49,18 @@ class GiveHelpViewController: UIViewController {
         return view
     }
 
-    func centerMapOnLocation(location: CLLocation) {
+    func centerMapOnLocation(location: CLLocationCoordinate2D) {
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(
-            location.coordinate, regionRadius * 2.0, regionRadius * 2.0)
+            location, regionRadius * 2.0, regionRadius * 2.0)
         self.map.setRegion(coordinateRegion, animated: true)
+    }
+    
+    func updateAnnotations() {
+        for request: HelpRequest in self.localHelpRequests {
+            let annotation = HelpRequestAnnotation(helpRequest: request)
+            self.map.addAnnotation(annotation)
+            print("Adding annotation at latitude: \(request.coordinate.latitude), longitude: \(request.coordinate.longitude)")
+        }
     }
 }
 

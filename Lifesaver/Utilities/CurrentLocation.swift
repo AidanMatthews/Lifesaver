@@ -30,6 +30,7 @@ class CurrentLocation: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         for location in locations {
             self.currentCoordinate = location.coordinate
+            print("Current latitude is \(location.coordinate.latitude), longitude is \(location.coordinate.longitude)")
         }
     }
 }
